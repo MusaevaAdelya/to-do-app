@@ -1,0 +1,14 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+* {
+    box-sizing: border-box;
+    padding: 0;
+    margin: 0;
+}
+
+.text-shadow:hover {
+    text-shadow: 0 0 150px rgb(255, 255, 255)
+}
