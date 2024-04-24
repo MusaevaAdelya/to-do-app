@@ -1,4 +1,3 @@
-import { isVisible } from "@testing-library/user-event/dist/utils";
 import React, { createContext, useContext, useReducer, useEffect } from "react";
 
 // Define initial state

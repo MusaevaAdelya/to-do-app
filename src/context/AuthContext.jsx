@@ -1,38 +1,75 @@
-import { createContext, useContext, useReducer } from "react";
-
-const AuthContext = createContext();
+import React, { createContext, useContext, useReducer, useEffect } from "react";
 
 const initialState = {
   user: null,
+  isLoggedIn: false,
+  isRegistered: false,
+  isWrongLogin: false,
 };
 
-function reducer(state, action) {
+// Create context
+const AuthContext = createContext();
+
+// Define reducer function
+function authReducer(state, action) {
   switch (action.type) {
-    case "login":
-      localStorage.setItem("user", JSON.stringify(action.payload));
-      return { ...state, user: action.payload };
-    case "logout":
-      localStorage.removeItem("user");
-      return { ...state, user: null };
-    case "register":
-      localStorage.setItem("user", JSON.stringify(action.payload));
-      return { ...state, user: action.payload };
+    case "userReceived":
+      return {
+        ...state,
+        user: action.payload,
+      };
+    case "registerUser":
+      saveUserToLocalStorage(action.payload);
+      return {
+        ...state,
+        user: action.payload,
+        isRegistered: true,
+      };
+
+    case "loginUser":
+      if (
+        state.user &&
+        state.user.username === action.payload.username &&
+        state.user.password === action.payload.password
+      ) {
+        return {
+          ...state,
+          isLoggedIn: true,
+          isWrongLogin: false,
+        };
+      } else {
+        return {
+          ...state,
+          isWrongLogin: true,
+        };
+      }
+
     default:
-      throw new Error("Unknown action");
+      throw new Error("Action unknown auth");
   }
 }
 
-function getUserFromLocalStorage() {
-  const user = localStorage.getItem("user");
-  return user ? JSON.parse(user) : null;
+function saveUserToLocalStorage(user) {
+  localStorage.setItem("user", JSON.stringify(user));
 }
 
 function AuthProvider({ children }) {
-  const [state, dispatch] = useReducer(reducer, initialState);
-  const user = getUserFromLocalStorage();
+  const [auth, authDispatch] = useReducer(authReducer, initialState);
+
+  useEffect(() => {
+    const savedUser = localStorage.getItem("user");
+    if (savedUser) {
+      try {
+        const parsedUser = JSON.parse(savedUser);
+        authDispatch({ type: "userReceived", payload: parsedUser });
+      } catch (error) {
+        console.error("Error parsing user from localStorage:", error);
+      }
+    }
+  }, []);
 
   return (
-    <AuthContext.Provider value={{ user, dispatch }}>
+    <AuthContext.Provider value={{ auth, authDispatch }}>
       {children}
     </AuthContext.Provider>
   );
@@ -40,8 +77,8 @@ function AuthProvider({ children }) {
 
 function useAuth() {
   const context = useContext(AuthContext);
-  if (!context) {
-    throw new Error("useAuth must be used within an AuthProvider");
+  if (context === undefined) {
+    throw new Error("useTodo must be used within a TodoProvider");
   }
   return context;
 }

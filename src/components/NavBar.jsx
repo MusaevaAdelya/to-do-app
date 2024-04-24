@@ -9,17 +9,17 @@ function NavBar() {
     const navLinkDeleteStyles=navLinkBaseStyles+" hover:bg-red-500"
 
     return (
-        <nav className=" grid grid-cols-4 text-gray-300  text-center my-5">
-            <NavLink to="/all" className={navLinkPrimaryStyles+" rounded-l-md"}>
+        <nav className="grid grid-cols-4 my-5 text-center text-gray-300 ">
+            <NavLink to="/" className={navLinkPrimaryStyles+" rounded-l-md"}>
                 All
             </NavLink>
-            <NavLink to="/active" className={navLinkPrimaryStyles}>
+            <NavLink to="active" className={navLinkPrimaryStyles}>
                 Active
             </NavLink>
-            <NavLink to="/done" className={navLinkPrimaryStyles}>
+            <NavLink to="done" className={navLinkPrimaryStyles}>
                 Done
             </NavLink>
-            <NavLink to="/deleted" className={navLinkDeleteStyles+ " rounded-r-md"}>
+            <NavLink to="deleted" className={navLinkDeleteStyles+ " rounded-r-md"}>
                 Deleted
             </NavLink>
         </nav>
